@@ -1,6 +1,6 @@
 import React from "react";
 import { Heart, Share2 } from "lucide-react";
-
+// mini blog card
 const BlogCard = ({ blog }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
