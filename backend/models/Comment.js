@@ -9,15 +9,15 @@ const commentSchema = new mongoose.Schema(
       ref: 'Blog',
       required: true,
     },
-    authorType: {
-      type: String,
-      enum: ['student', 'club'],
-      required: true,
-    },
-    author: {
+     studentId: {
       type: mongoose.Schema.Types.ObjectId,
-      refPath: 'authorType',
-      required: true,
+      ref: "Student",
+      default: null,
+    },
+    clubId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Club",
+      default: null,
     },
     content: {
       type: String,
