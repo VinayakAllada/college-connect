@@ -11,6 +11,7 @@ const blogSchema = new mongoose.Schema(
     },
     pdfs: [String],    // URLs to uploaded PDFs (Cloudinary or local)
     photos: [String],  // URLs to uploaded images
+    urls :[string]
     authorType: {
       type: String,
       enum: ["Student", "Club"],
@@ -39,11 +40,11 @@ const blogSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // Admin approves all blogs
     },
-    commentIds: {
+    commentIds: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
       default: null,
-    }, 
+    }], 
    
   },
   { timestamps: true }

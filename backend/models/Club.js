@@ -10,6 +10,7 @@ const clubSchema = new mongoose.Schema({
     {
       name: String,
       role: String,
+      profilepic: string 
     },
   ], // Array of council members
 }, { timestamps: true });
