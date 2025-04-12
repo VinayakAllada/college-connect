@@ -11,6 +11,7 @@ const blogSchema = new mongoose.Schema(
     },
     pdfs: [String],    // URLs to uploaded PDFs (Cloudinary or local)
     photos: [String],  // URLs to uploaded images
+    urls :[string]
     authorType: {
       type: String,
       enum: ["Student", "Club"],
