@@ -10,10 +10,10 @@ export const createBlog = async (req, res) => {
 
     let author, authorType;
     if (req.student) {
-      author = req.student._id;
+      studentId = req.student._id;
       authorType = 'Student';
     } else if (req.club) {
-      author = req.club._id;
+      clubId = req.club._id;
       authorType = 'Club';
     } else {
       return res.status(403).json({ message: 'Unauthorized' });
@@ -37,8 +37,7 @@ export const createBlog = async (req, res) => {
 export const getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find({ approved: true })
-      .populate('author')
-      .populate('comments');
+       
     res.status(200).json(blogs);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching blogs' });
@@ -57,7 +56,7 @@ export const getSectionBlogs = async (req, res) => {
 
 export const getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id).populate('author').populate('comments');
+    const blog = await Blog.findById(req.params.id);
     if (!blog) return res.status(404).json({ message: 'Blog not found' });
     res.status(200).json(blog);
   } catch (err) {
@@ -81,30 +80,10 @@ export const deleteBlog = async (req, res) => {
   }
 };
 
-export const editBlog = async (req, res) => {
-  try {
-    const { title, description, section } = req.body;
-    const files = req.files;
-    const blog = await Blog.findById(req.params.id);
 
-    if (!blog) return res.status(404).json({ message: 'Blog not found' });
-    if (String(blog.author) !== String(req.club._id)) {
-      return res.status(403).json({ message: 'Not authorized to edit this blog' });
-    }
 
-    const media = files.length ? files.map((f) => f.path) : blog.media;
 
-    blog.title = title || blog.title;
-    blog.description = description || blog.description;
-    blog.section = section || blog.section;
-    blog.media = media;
 
-    await blog.save();
-    res.status(200).json(blog);
-  } catch (err) {
-    res.status(500).json({ message: 'Error editing blog' });
-  }
-};
 
 export const likeBlog = async (req, res) => {
   try {
