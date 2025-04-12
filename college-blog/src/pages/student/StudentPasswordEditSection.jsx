@@ -12,12 +12,12 @@ function EditPassword() {
 
     const handleSave = () => {
         if (newPassword !== confirmPassword) {
-            alert("New passwords do not match!");
+            toast.error("New passwords do not match!");
             return;
         }
 
         if (newPassword === oldPassword) {
-            alert("New password can't be same as old!");
+            toast.error("New password can't be same as old!");
             return;
         }
         toast.success("Password updated Successfully!")
