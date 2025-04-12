@@ -45,7 +45,7 @@ export const getMyBlogs = async (req, res) => {
 };
 
 //  Add Comment on Blog
-export const commentOnBlog = async (req, res) => {
+export const addComment = async (req, res) => {
   const { blogId } = req.params;
   const { text } = req.body;
 
@@ -67,21 +67,15 @@ export const commentOnBlog = async (req, res) => {
 };
 /// get comments of a blog 
 
+export const getcomments =  async(req,res)=>{
 
-
-
-export get-all-comments  async=(req,res)=>{
-
-   try {
-     const blogid= req.blog._id;
+  try {
+    const blogid= req.blog._id;
     const comments = await Comment.find({blogId  : blogid}).sort({ createdAt: -1 });
-    res.status(200).json(blogs);
-
-   
-    res.status(201).json({ message: "Comment fecthed ",comments });
-  } catch (err) {
+    if (!comments) return res.status(404).json({ message: "No comments found" });
+    res.status(201).json({ message: "Comments fecthed ",comments });
+  } 
+  catch (err) {
     res.status(500).json({ message: "Error getting  comment", error: err });
   }
-
-  
 }

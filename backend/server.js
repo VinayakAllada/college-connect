@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import clubRoutes  from './routes/clubRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
 
 
 dotenv.config();
@@ -29,6 +30,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students',studentRoutes);
 app.use('/api/admin',adminRoutes);
 app.use('/api/club',clubRoutes);
+app.use('/api/club/blogs/comments', commentRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -91,7 +91,7 @@ export const createBlog = async (req, res) => {
 // Controller to fetch blogs for the club (including approved and pending blogs)
 export const getClubBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ author: req.user.id }); // Only fetch blogs for the current club
+    const blogs = await Blog.find({ author: req.club.id , isApproved: true }); // Only fetch blogs for the current club
     res.status(200).json(blogs);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch blogs' });

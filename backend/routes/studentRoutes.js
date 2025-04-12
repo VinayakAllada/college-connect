@@ -23,12 +23,12 @@ router.get('/logout', protectStudent, logoutStudent);
 router.get('/blogs/:section', protectStudent, getBlogsBySection);
 
 router.put('/like/:id', protectStudent, likeBlog);
+router.get('/liked', protectStudent, getLikedBlogs);
 router.put('/unlike/:id', protectStudent, unlikeBlog);
 
 router.put('/save/:id', protectStudent, saveBlog);
 router.put('/unsave/:id', protectStudent, unsaveBlog);
 
-router.get('/liked', protectStudent, getLikedBlogs);
 router.get('/saved', protectStudent, getSavedBlogs);
 
 export default router;
