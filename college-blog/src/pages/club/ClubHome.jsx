@@ -1,161 +1,66 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Bell, ChevronDown, ChevronRight, Moon, Sun } from "lucide-react";
+// src/pages/ClubHome.jsx
+import React, { useState } from "react";
+import { Menu, X, ChevronDown, ChevronRight, Moon, Sun } from "lucide-react";
 import { motion } from "framer-motion";
-import axios from "axios";
-import { toast } from "react-toastify";
+import { useNavigate, useLocation } from "react-router-dom";
+import AddBlog from "./AddBlog";
+import AllBlogs from "./AllBlogs";
+import ViewClub from "./ViewClub";
+import ClubCouncil from "./ClubCouncil";
 
-const ClubDashboard = () => {
+const ClubHome = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const [collapseMenu, setCollapseMenu] = useState(null);
-  const [blogs, setBlogs] = useState([]);
-  const [pendingBlogs, setPendingBlogs] = useState([]);
-  const [club, setClub] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const tab = new URLSearchParams(location.search).get("tab");
+  const tab = new URLSearchParams(location.search).get("tab") || "allBlogs";
 
-  // Fetching data for blogs, pending blogs, and club info
-  const fetchData = async () => {
-    try {
-      const clubRes = await axios.get("/api/club/details");
-      setClub(clubRes.data);
-
-      if (tab === "clubBlogs") {
-        const res = await axios.get(`/api/club/${clubRes.data._id}/blogs`);
-        setBlogs(res.data);
-      } else if (tab === "pendingBlogs") {
-        const res = await axios.get(`/api/club/${clubRes.data._id}/pending-blogs`);
-        setPendingBlogs(res.data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Handle uploading a blog
-  const handleUploadBlog = async (blogData) => {
-    try {
-      await axios.post(`/api/club/${club._id}/upload-blog`, blogData);
-      toast.success("Blog uploaded successfully!");
-      fetchData();
-    } catch (err) {
-      toast.error("Error uploading blog");
-    }
-  };
-
-  // Handle approving a blog
-  const handleApproveBlog = async (blogId) => {
-    try {
-      await axios.put(`/api/club/approve-blog/${blogId}`);
-      toast.success("Blog approved!");
-      fetchData();
-    } catch (err) {
-      toast.error("Error approving blog");
-    }
-  };
-
-  // Handle deleting a blog
-  const handleDeleteBlog = async (blogId) => {
-    try {
-      await axios.delete(`/api/club/delete-blog/${blogId}`);
-      toast.success("Blog deleted");
-      fetchData();
-    } catch (err) {
-      toast.error("Error deleting blog");
-    }
-  };
-
-  // Handle theme toggle
   const toggleTheme = () => {
     setDarkMode(!darkMode);
     document.documentElement.classList.toggle("dark");
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [tab]);
-
   const sidebarItems = [
     {
       title: "Manage Blogs",
       subItems: [
-        { name: "My Blogs", to: "/club/dashboard?tab=clubBlogs" },
-        { name: "Pending Blogs", to: "/club/dashboard?tab=pendingBlogs" },
+        { name: "Add Blog", to: "/club/home?tab=addBlog" },
+        { name: "All Blogs", to: "/club/home?tab=allBlogs" },
       ],
     },
     {
       title: "Club Info",
       subItems: [
-        { name: "Edit Club", to: "/club/edit" },
-        { name: "View Club", to: "/club/view" },
+        { name: "View Club", to: "/club/home?tab=viewClub" },
+        { name: "Club Council", to: "/club/home?tab=clubCouncil" },
       ],
     },
   ];
 
-  const renderBlogs = () =>
-    blogs.length === 0 ? (
-      <p className="text-gray-500 dark:text-gray-400">No blogs found for this club.</p>
-    ) : (
-      blogs.map((blog) => (
-        <div
-          key={blog._id}
-          className="bg-white dark:bg-gray-800 p-4 rounded shadow-md mb-4"
-        >
-          <h3 className="text-lg font-semibold mb-1">{blog.title}</h3>
-          <p className="text-sm mb-2">{blog.description}</p>
-          <div className="flex gap-3">
-            <Link
-              to={`/blog/${blog._id}`}
-              className="bg-blue-500 px-3 py-1 rounded text-white text-sm"
-            >
-              Read
-            </Link>
-            <button
-              onClick={() => handleDeleteBlog(blog._id)}
-              className="bg-red-500 px-3 py-1 rounded text-white text-sm"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))
-    );
-
-  const renderPendingBlogs = () =>
-    pendingBlogs.length === 0 ? (
-      <p className="text-gray-500 dark:text-gray-400">No pending blogs to approve.</p>
-    ) : (
-      pendingBlogs.map((blog) => (
-        <div
-          key={blog._id}
-          className="bg-white dark:bg-gray-800 p-4 rounded shadow-md mb-4"
-        >
-          <h3 className="text-lg font-semibold mb-1">{blog.title}</h3>
-          <p className="text-sm mb-2">{blog.description}</p>
-          <div className="flex gap-3">
-            <button
-              onClick={() => handleApproveBlog(blog._id)}
-              className="bg-green-500 px-3 py-1 rounded text-white text-sm"
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => handleDeleteBlog(blog._id)}
-              className="bg-red-500 px-3 py-1 rounded text-white text-sm"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      ))
-    );
+  const renderTabContent = () => {
+    switch (tab) {
+      case "addBlog":
+        return <AddBlog />;
+      case "viewClub":
+        return <ViewClub />;
+      case "editClub":
+        return <EditClub />;
+      case "clubCouncil":
+        return <ClubCouncil />;
+      default:
+        return <AllBlogs />;
+    }
+  };
 
   return (
-    <div className={`flex h-screen transition-colors duration-500 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}>
+    <div
+      className={`flex h-screen transition-colors duration-500 ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}
+    >
       {/* Sidebar */}
-      <div className={`fixed z-30 md:static top-0 left-0 h-full w-64 ${darkMode ? "bg-gray-800" : "bg-blue-900"} text-white transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+      <div
+        className={`fixed z-30 md:static top-0 left-0 h-full w-64 ${darkMode ? "bg-gray-800" : "bg-blue-900"} text-white transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+      >
         <div className="flex items-center justify-between px-4 py-4 border-b border-blue-700">
           <h1 className="text-xl font-bold">Club Panel</h1>
           <button className="md:hidden" onClick={() => setSidebarOpen(false)}>
@@ -180,13 +85,13 @@ const ClubDashboard = () => {
                   className="ml-4 mt-1 space-y-2"
                 >
                   {item.subItems.map((sub, j) => (
-                    <Link
+                    <button
                       key={j}
-                      to={sub.to}
-                      className="block px-3 py-1 rounded hover:bg-blue-700 text-sm"
+                      onClick={() => navigate(sub.to)}
+                      className="block text-left w-full px-3 py-1 rounded hover:bg-blue-700 text-sm"
                     >
                       {sub.name}
-                    </Link>
+                    </button>
                   ))}
                 </motion.div>
               )}
@@ -198,26 +103,27 @@ const ClubDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
-        <div className={`flex justify-between items-center shadow-md px-4 py-4 md:px-6 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+        <div
+          className={`flex justify-between items-center shadow-md px-4 py-4 md:px-6 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}
+        >
           <button className="md:hidden" onClick={() => setSidebarOpen(true)}>
             <Menu />
           </button>
 
-          <h2 className="text-xl font-semibold text-blue-700 dark:text-white">WELCOME CLUB</h2>
+          <h2 className="text-xl font-semibold text-blue-700 dark:text-white">
+            WELCOME ACM
+          </h2>
 
           <div className="flex items-center gap-4">
-            {/* Notification */}
-            <div className="relative">
-              <Bell className="cursor-pointer" />
-            </div>
+            {/* Club Logo */}
+            <img src="./images/club-logo.png" alt="club logo" className="w-6 h-6" />
 
-            {/* Theme Toggle */}
-            <button onClick={toggleTheme}>
-              {darkMode ? <Sun /> : <Moon />}
-            </button>
+            <button onClick={toggleTheme}>{darkMode ? <Sun /> : <Moon />}</button>
 
-            {/* Logout */}
-            <button onClick={() => navigate("/student/login")} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm">
+            <button
+              onClick={() => navigate("/student/login")}
+              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
+            >
               Logout
             </button>
           </div>
@@ -231,13 +137,13 @@ const ClubDashboard = () => {
           className="p-6 overflow-y-auto flex-1"
         >
           <h2 className="text-2xl font-bold mb-4 capitalize">
-            {tab?.replace(/([A-Z])/g, " $1") || "Dashboard"}
+            {tab.replace(/([A-Z])/g, " $1")}
           </h2>
-          {tab === "pendingBlogs" ? renderPendingBlogs() : renderBlogs()}
+          {renderTabContent()}
         </motion.div>
       </div>
     </div>
   );
 };
 
-export default ClubDashboard;
+export default ClubHome;

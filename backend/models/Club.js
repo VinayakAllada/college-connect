@@ -5,7 +5,13 @@ const clubSchema = new mongoose.Schema({
   password: { type: String, required: true },
   description: { type: String },
   photo: { type: String },
-  isApproved: { type: Boolean, default: false }
+  isApproved: { type: Boolean, default: false },
+   clubCouncil: [
+    {
+      name: String,
+      role: String,
+    },
+  ], // Array of council members
 }, { timestamps: true });
 
 const Club = mongoose.model('Club', clubSchema);

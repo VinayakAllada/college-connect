@@ -6,7 +6,7 @@ import {
   getSectionBlogs,
   getBlogById,
   deleteBlog,
-  editBlog,
+
   likeBlog,
   saveBlog,
 } from '../controllers/blogController.js';
