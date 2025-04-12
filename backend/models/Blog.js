@@ -9,27 +9,42 @@ const blogSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    media: [String], // For image/pdf URLs
-    section: {
-      type: String, // 'Intern', 'Tech', 'Academic', or club name
-      required: true,
-    },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+    pdfs: [String],    // URLs to uploaded PDFs (Cloudinary or local)
+    photos: [String],  // URLs to uploaded images
     authorType: {
       type: String,
-      enum: ['student', 'club'],
+      enum: ["Student", "Club"],
       required: true,
     },
-    author: {
+    studentId: {
       type: mongoose.Schema.Types.ObjectId,
-      refPath: 'authorType',
+      ref: "Student",
+      default: null,
+    },
+     section: {
+      type: String,
+      enum: ["Intern", "Academic Resources", "Tech Stacks", "Experience", "Club"],
       required: true,
+    },
+    clubId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Club",
+      default: null,
+    },
+    likes: {
+      type: Number,
+      default: 0,
     },
     isApproved: {
       type: Boolean,
-      default: false,
+      default: false, // Admin approves all blogs
     },
+    commentIds: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+    }, 
+   
   },
   { timestamps: true }
 );
