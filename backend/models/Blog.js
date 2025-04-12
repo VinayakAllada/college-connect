@@ -21,6 +21,11 @@ const blogSchema = new mongoose.Schema(
       ref: "Student",
       default: null,
     },
+     section: {
+      type: String,
+      enum: ["Intern", "Academic Resources", "Tech Stacks", "Experience", "Club"],
+      required: true,
+    },
     clubId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Club",
