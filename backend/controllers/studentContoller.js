@@ -36,7 +36,7 @@ export const logoutStudent = (req, res) => {
 export const getBlogsBySection = async (req, res) => {
   const { section } = req.params;
   try {
-    const blogs = await Blog.find({ section, approved: true }).populate('club student');
+    const blogs = await Blog.find({ section:section, approved: true, });
     res.status(200).json(blogs);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching blogs', error: err });
