@@ -40,11 +40,11 @@ const blogSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // Admin approves all blogs
     },
-    commentIds: {
+    commentIds: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
       default: null,
-    }, 
+    }], 
    
   },
   { timestamps: true }
