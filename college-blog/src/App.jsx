@@ -8,6 +8,9 @@ import StudentRegister from './pages/student/StudentRegister';
 import ClubLogin from './pages/club/ClubLogin';
 import ClubRegister from './pages/club/ClubRegister';
 import StudentHome from './pages/student/StudentHome';
+import StudentProfileSection from './pages/student/StudentProfileSection';
+import StudentProfileEditSection from './pages/student/StudentProfileEditSection';
+import StudentPasswordEditSection from './pages/student/StudentPasswordEditSection';
 import ClubHome from './pages/club/ClubHome';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import NotFound from './pages/NotFound';
@@ -33,6 +36,12 @@ export default function App() {
         {/* Student Auth */}
         <Route path="/student/login" element={<StudentLogin />} />
         <Route path="/student/register" element={<StudentRegister />} />
+        <Route path="/StudentProfileSection" element={<StudentProfileSection />} />
+        <Route path="/StudentProfileEditSection" element={<StudentProfileEditSection/>} />
+        <Route path="/StudentPasswordEditSection" element={<StudentPasswordEditSection/>} />
+
+
+
 
         {/* Club Auth */}
         <Route path="/club/login" element={<ClubLogin />} />
