@@ -23,7 +23,6 @@ const AddBlog = () => {
         Add a New Blog
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-
         {/* Blog Title */}
         <div className="relative">
           <input
@@ -33,9 +32,6 @@ const AddBlog = () => {
             onChange={(e) => setTitle(e.target.value)}
             className="w-full p-3 border-2 border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400 transition"
           />
-          <div className="absolute top-1/2 right-3 transform -translate-y-1/2">
-            <span className="text-sm text-gray-400 dark:text-gray-500">Title</span>
-          </div>
         </div>
 
         {/* Description */}
@@ -47,9 +43,6 @@ const AddBlog = () => {
             className="w-full p-3 border-2 border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-400 transition"
             rows="6"
           />
-          <div className="absolute top-3 right-3">
-            <span className="text-sm text-gray-400 dark:text-gray-500">Description</span>
-          </div>
         </div>
 
         {/* Image Upload */}
@@ -97,3 +90,4 @@ const AddBlog = () => {
 };
 
 export default AddBlog;
+

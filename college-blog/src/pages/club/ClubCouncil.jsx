@@ -22,6 +22,16 @@ const ClubCouncil = () => {
     }
   };
 
+  const handleRoleChange = (index) => {
+    const newRole = prompt("Enter new role:");
+    if (newRole && newRole.trim() !== "") {
+      const updatedCouncil = [...council];
+      updatedCouncil[index].role = newRole.trim();
+      setCouncil(updatedCouncil);
+    }
+  };
+  
+
   const handleImageChange = (index, file) => {
     if (!file) return;
     const imageUrl = URL.createObjectURL(file);
@@ -55,7 +65,10 @@ const ClubCouncil = () => {
 
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Club Council</h2>
+      <h2 className="text-xl font-semibold text-center text-gray-800 dark:text-white mb-6">
+  Meet our Dynamic Council!
+</h2>
+
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-10">
         {council.map((member, i) => (
@@ -78,6 +91,12 @@ const ClubCouncil = () => {
               onChange={(e) => handleImageChange(i, e.target.files[0])}
               className="hidden"
             />
+            <button
+  onClick={() => handleRoleChange(i)}
+  className="w-full py-2 mb-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
+>
+  Change Role
+</button>
 
             <button
               onClick={() => handleNameChange(i)}
