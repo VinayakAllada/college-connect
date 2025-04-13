@@ -1,18 +1,46 @@
 import express from 'express';
-import { createBlog, getClubBlogs, getPendingBlogs, approveBlog } from '../controllers/clubController.js';
-
+import { createBlog, getClubBlogs ,updateClubDescription,
+	updateClubProfilePhoto,
+	addCouncilMember,
+	updateCouncilMember,getClubInfo,
+	changeClubPassword,deleteCouncilMember} from '../controllers/clubController.js';
+import { protectClub } from '../middlewares/authMiddleware.js';
+import upload from '../middlewares/multer.js';
 const router = express.Router();
 
 // Create a new blog (for club)
-router.post('/create-blog', createBlog);
+router.post('/create-blog', upload.fields([
+    { name: 'coverimg', maxCount: 1 },
+    { name: 'photos', maxCount: 10 },
+    { name: 'pdfs', maxCount: 10 },
+  ]),protectClub,createBlog);
 
 // Get all blogs for the club
-router.get('/blogs', getClubBlogs);
+router.get('/blogs',protectClub, getClubBlogs);
 
-// Get pending blogs for approval
-router.get('/pending-blogs', getPendingBlogs);
+router.put('/update-description', protectClub, updateClubDescription);
 
-// Approve a specific blog
-router.put('/approve-blog/:id', approveBlog);
+router.put(
+  '/update-profile-photo',
+  protectClub,
+  upload.single('photo'),
+  updateClubProfilePhoto
+);
+
+router.post(
+  '/add-council-member',
+  protectClub,
+  upload.single('profilepic'),
+  addCouncilMember
+);
+
+
+router.get('/info', protectClub, getClubInfo);
+router.put('/change-password', protectClub, changeClubPassword);
+router.put('/update-council-member', protectClub, upload.single('profilepic'), updateCouncilMember);
+router.delete('/delete-council-member', protectClub, deleteCouncilMember);
 
 export default router;
+//When rendering the club council list, pass member._id along with role/name so that updates/deletes target the right person.
+
+
