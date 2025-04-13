@@ -36,15 +36,19 @@ const blogSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isApproved: {
-      type: Boolean,
-      default: false, // Admin approves all blogs
-    },
-    commentIds: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
-      default: null,
-    }], 
+   
+    comments: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+        comment: String,
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending',
+    }
    
   },
   { timestamps: true }
@@ -52,3 +56,4 @@ const blogSchema = new mongoose.Schema(
 
 const Blog = mongoose.model('Blog', blogSchema);
 export default Blog;
+// final blog model 
