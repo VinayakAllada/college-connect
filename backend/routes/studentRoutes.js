@@ -1,34 +1,29 @@
 import express from 'express';
 import {
-  updateProfile,
+
   logoutStudent,
+  getAllApprovedClubs,
+  getClubBlogs,
   getBlogsBySection,
-  likeBlog,
-  unlikeBlog,
-  saveBlog,
-  unsaveBlog,
+  updateStudentProfile,
   getLikedBlogs,
-  getSavedBlogs,
+  getStudentInfo,
+  likeOrUnlikeBlog,
+  commentOnBlog
+  
 } from '../controllers/studentContoller.js';
 
 import { protectStudent } from '../middlewares/authMiddleware.js';
 import upload from '../middlewares/multer.js';
 
 const router = express.Router();
-
-// Protected routes
-router.put('/update', protectStudent, upload.single('profilePic'), updateProfile);
-router.get('/logout', protectStudent, logoutStudent);
-
-router.get('/blogs/:section', protectStudent, getBlogsBySection);
-
-router.put('/like/:id', protectStudent, likeBlog);
-router.get('/liked', protectStudent, getLikedBlogs);
-router.put('/unlike/:id', protectStudent, unlikeBlog);
-
-router.put('/save/:id', protectStudent, saveBlog);
-router.put('/unsave/:id', protectStudent, unsaveBlog);
-
-router.get('/saved', protectStudent, getSavedBlogs);
+router.get('/clubs', protectStudent, getAllApprovedClubs);
+router.get('/clubs/:clubId/blogs', protectStudent, getClubBlogs);
+router.get('/blogs/section/:section', protectStudent, getBlogsBySection);
+router.put('/update-profile', protectStudent, upload.single('profilePic'), updateStudentProfile);
+router.get('/liked-blogs', protectStudent, getLikedBlogs);
+router.get('/me', protectStudent, getStudentInfo);
+router.post('/like/:blogId', protectStudent, likeOrUnlikeBlog);
+router.post('/comment/:blogId', protectStudent, commentOnBlog);
 
 export default router;
