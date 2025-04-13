@@ -1,33 +1,26 @@
 
 import express from 'express';
 
-import { protectStudent, isAdmin } from '../middlewares/authMiddleware.js';
+import { isAdmin } from '../middlewares/authMiddleware.js';
 
 import {
-  approveBlog,
-  approveClub,
-  getPendingBlogs,
   getPendingClubs,
-  deleteClub,
-  deleteBlog,
-  getApprovedBlogs,
-  getApprovedClubs,
-  getDisapprovedData
+  approveClub,
+  rejectClub,
+  getPendingBlogs,
+  approveBlog,
+  rejectBlog,
 } from "../controllers/adminController.js";
 const router = express.Router();
 // Middleware: Student must be admin
-router.use(protectStudent, isAdmin);
-router.put("/approve-blog/:id", approveBlog);
-router.put("/approve-club/:id", approveClub);
+// CLUB ROUTES
+router.get('/pending-clubs', isAdmin, getPendingClubs);
+router.put('/approve-club/:clubId', isAdmin, approveClub);
+router.put('/reject-club/:clubId', isAdmin, rejectClub);
 
-router.get("/pending-blogs", getPendingBlogs);
-router.get("/pending-clubs", getPendingClubs);
-
-router.delete("/delete-club/:id", deleteClub);
-router.delete("/delete-blog/:id", deleteBlog);
-
-router.get("/approved-blogs", getApprovedBlogs);
-router.get("/approved-clubs", getApprovedClubs);
-router.get('/disapproved-data', getDisapprovedData);
+// BLOG ROUTES
+router.get('/pending-blogs', isAdmin, getPendingBlogs);
+router.put('/approve-blog/:blogId', isAdmin, approveBlog);
+router.put('/reject-blog/:blogId', isAdmin, rejectBlog);
 
 export default router;
