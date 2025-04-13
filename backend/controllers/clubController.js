@@ -6,6 +6,10 @@ import cloudinary from "../utils/cloudinary.js";
 
 import { deleteImage } from '../utils/cloudinary.js';
 
+export const logoutclub = (req, res) => {
+  res.cookie('token', '', { maxAge: 1 });
+  res.status(200).json({ message: 'Logged out successfully' });
+};
 
 
 export const createBlog = async (req, res) => {
