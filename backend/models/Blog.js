@@ -9,9 +9,14 @@ const blogSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    coverimg: {
+      type: String,
+      required:true,
+
+    },
     pdfs: [String],    // URLs to uploaded PDFs (Cloudinary or local)
     photos: [String],  // URLs to uploaded images
-    urls :[String],
+
     authorType: {
       type: String,
       enum: ["Student", "Club"],
@@ -32,14 +37,11 @@ const blogSchema = new mongoose.Schema(
       ref: "Club",
       default: null,
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
    
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student' }],
     comments: [
       {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
+        student: { type: mongoose.Schema.Types.ObjectId, ref: 'Student' },
         comment: String,
         createdAt: { type: Date, default: Date.now },
       },
