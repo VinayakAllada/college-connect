@@ -9,7 +9,7 @@ import {
   getLikedBlogs,
   getStudentInfo,
   likeOrUnlikeBlog,
-  commentOnBlog
+  commentOnBlog,updateStudentPassword
   
 } from '../controllers/studentContoller.js';
 
@@ -25,5 +25,7 @@ router.get('/liked-blogs', protectStudent, getLikedBlogs);
 router.get('/me', protectStudent, getStudentInfo);
 router.post('/like/:blogId', protectStudent, likeOrUnlikeBlog);
 router.post('/comment/:blogId', protectStudent, commentOnBlog);
+router.put('/update-password', protectStudent, updateStudentPassword);
+router.post('/logout',protectStudent,logoutStudent);
 
 export default router;
