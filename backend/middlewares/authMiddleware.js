@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import Student from '../models/student.js';
 import Club from '../models/Club.js';
+                                                        
 
 export const protectStudent = async (req, res, next) => {
   try {
@@ -21,9 +22,11 @@ export const protectStudent = async (req, res, next) => {
 
 export const protectClub = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ message: 'Not authorized' });
 
+    const token = req.cookies.token;
+    
+    if (!token) return res.status(401).json({ message: 'Not authorized' });
+         
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const club = await Club.findById(decoded.id).select('-password');
 
@@ -35,7 +38,6 @@ export const protectClub = async (req, res, next) => {
     res.status(401).json({ message: 'Token invalid' });
   }
 };
-
 
 export const isAdmin = (req, res, next) => {
    try{
@@ -62,3 +64,4 @@ export const isAdmin = (req, res, next) => {
    }
 };
 // done completely
+
