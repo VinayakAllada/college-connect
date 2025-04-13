@@ -36,29 +36,29 @@ export const protectClub = async (req, res, next) => {
   }
 };
 
-//export const protectAdmin = (req, res, next) => {
-//  try {
-//    const token = req.cookies.token;
-//    if (!token) return res.status(401).json({ message: 'Not authorized' });
 
-//    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//    if (
-//      decoded.email === process.env.ADMIN_EMAIL &&
-//      decoded.role === 'admin'
-//    ) {
-//      req.admin = true;
-//      next();
-//    } else {
-//      return res.status(401).json({ message: 'Not authorized as admin' });
-//    }
-//  } catch (err) {
-//    return res.status(401).json({ message: 'Token invalid' });
-//  }
-//};
 export const isAdmin = (req, res, next) => {
-  if (req.student && req.student.email === process.env.ADMIN_EMAIL) {
-    next();
-  } else {
-    res.status(403).json({ message: 'Admin access only' });
-  }
+   try{
+    const token = req.cookies.token; // assuming you're storing the token in cookies
+
+    if (!token) {
+      return res.status(401).json({ message: 'Not authorized, token missing' });
+    }
+
+    // verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied, not an admin' });
+    }
+
+    // add decoded info to req.user if needed
+    req.user = decoded;
+
+    next(); // allow access
+   } catch(err)
+   {
+    res.status(401).json({ message: 'Token invalid' });
+   }
 };
+// done completely
