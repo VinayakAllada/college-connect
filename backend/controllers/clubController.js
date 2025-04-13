@@ -4,123 +4,199 @@ import Comment from "../models/Comment.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../utils/cloudinary.js";
 
-// 🔁 Update Club Profile (desc, password, optional photo)
-export const updateClubProfile = async (req, res) => {
-  const clubId = req.club._id;
-  const { description, password } = req.body;
-  let clubPhoto = req.body.clubPhoto;
-
-  try {
-    const club = await Club.findById(clubId);
-    if (!club) return res.status(404).json({ message: "Club not found" });
-
-    if (description) club.description = description;
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      club.password = await bcrypt.hash(password, salt);
-    }
-
-    // Optional photo upload
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
-      clubPhoto = result.secure_url;
-      club.clubPhoto = clubPhoto;
-    }
-
-    await club.save();
-    res.status(200).json({ message: "Club profile updated successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Failed to update club profile", error: err });
-  }
-};
-
-// 👀 View all blogs created by the club
-export const getMyBlogs = async (req, res) => {
-  try {
-    const blogs = await Blog.find({ club: req.club._id }).sort({ createdAt: -1 });
-    res.status(200).json(blogs);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching club blogs", error: err });
-  }
-};
-
-// 💬 Add Comment on Blog
-export const commentOnBlog = async (req, res) => {
-  const { blogId } = req.params;
-  const { text } = req.body;
-
-  try {
-    const blog = await Blog.findById(blogId);
-    if (!blog) return res.status(404).json({ message: "Blog not found" });
-
-    const comment = new Comment({
-      blog: blogId,
-      text,
-      postedByClub: req.club._id,
-    });
-
-    await comment.save();
-    res.status(201).json({ message: "Comment added", comment });
-  } catch (err) {
-    res.status(500).json({ message: "Error adding comment", error: err });
-  }
-};
+import { deleteImage } from '../utils/cloudinary.js';
 
 
 
-// Controller to create a new blog (for club)
 export const createBlog = async (req, res) => {
-  const { title, description, media, section, authorType } = req.body;
   try {
-    const newBlog = new Blog({
+    const { title, description } = req.body;
+    if(!title|| !description)
+      {
+        return res.status(400).json({ message: ' Complete details are  missing ' });
+      }
+
+    const coverimg = req.files['coverimg']?.[0]?.path || null;
+    const photos = req.files['photos']?.map((file) => file.path) || [];
+    const pdfs = req.files['pdfs']?.map((file) => file.path) || [];
+    if (!coverimg) {
+      return res.status(400).json({ message: 'Cover image is required' });
+    }
+   
+
+    const newBlog = await Blog.create({
       title,
       description,
-      media,
-      section,
-      authorType,
-      author: req.user.id, // Assuming the club is logged in with JWT
+      coverimg,
+      photos,
+      pdfs,
+     
+      authorType: 'Club',
+      clubId: req.club._id,
+      section: 'Club',
+      status: 'approved', // club blogs are auto-approved
     });
 
-    await newBlog.save();
-    res.status(201).json(newBlog);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to create blog' });
+    res.status(201).json({
+      success: true,
+      message: 'Blog created successfully',
+      blog: newBlog,
+    });
+  } catch (error) {
+    console.error('Error creating blog:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create blog',
+      error: error.message,
+    });
   }
 };
+// Controller to fetch blogs for the club 
 
-// Controller to fetch blogs for the club (including approved and pending blogs)
 export const getClubBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ author: req.club.id , isApproved: true }); // Only fetch blogs for the current club
-    res.status(200).json(blogs);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch blogs' });
+    const clubId = req.club._id;
+
+    const blogs = await Blog.find({ clubId }).sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      blogs,
+    });
+  } catch (error) {
+    console.error('Error fetching club blogs:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch club blogs',
+      error: error.message,
+    });
   }
 };
-
-// Controller to get pending blogs (where approval is false)
-export const getPendingBlogs = async (req, res) => {
+export const updateClubDescription = async (req, res) => {
   try {
-    const pendingBlogs = await Blog.find({ author: req.user.id, isApproved: false }); // Only pending blogs for the club
-    res.status(200).json(pendingBlogs);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch pending blogs' });
+    const { description } = req.body;
+    req.club.description = description || req.club.description;
+    await req.club.save();
+    res.json({ message: 'Description updated successfully', club: req.club });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating description' });
   }
 };
-
-// Controller to approve a blog (admin or club)
-export const approveBlog = async (req, res) => {
-  const { id } = req.params;
+// 2. Update Profile Photo
+export const updateClubProfilePhoto = async (req, res) => {
   try {
-    const blog = await Blog.findById(id);
-    if (!blog) {
-      return res.status(404).json({ message: 'Blog not found' });
+    const file = req.file;
+    if (!file) return res.status(400).json({ message: 'No image uploaded' });
+
+    // Delete old photo if exists
+    if (req.club.photo) {
+      await deleteImage(req.club.photo);
     }
 
-    blog.isApproved = true; // Mark as approved
-    await blog.save();
-    res.status(200).json(blog);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to approve blog' });
+    req.club.photo = file.path;
+    await req.club.save();
+    res.json({ message: 'Profile photo updated', photo: file.path });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating photo' });
+  }
+};
+// 3. Add Council Member
+export const addCouncilMember = async (req, res) => {
+  try {
+    const { name, role } = req.body;
+    const file = req.file;
+
+    if (!name || !role || !file) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    req.club.clubCouncil.push({
+      name,
+      role,
+      profilepic: file.path,
+    });
+
+    await req.club.save();
+    res.json({ message: 'Council member added successfully', clubCouncil: req.club.clubCouncil });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding council member' });
+  }
+};
+
+// 4. Update Existing Council Member (based on id )
+export const updateCouncilMember = async (req, res) => {
+  try {
+    const { memberId, name } = req.body;
+    const file = req.file;
+
+    const member = req.club.clubCouncil.id(memberId);
+    if (!member) {
+      return res.status(404).json({ message: 'Council member not found' });
+    }
+
+    if (name) member.name = name;
+
+    if (file) {
+      if (member.profilepic) await deleteImage(member.profilepic);
+      member.profilepic = file.path;
+    }
+
+    await req.club.save();
+    res.json({ message: 'Council member updated', member });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating council member' });
+  }
+};
+
+// 5. Change Password
+export const changeClubPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    const isMatch = await bcrypt.compare(currentPassword, req.club.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Incorrect current password' });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    req.club.password = hashed;
+
+    await req.club.save();
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error changing password' });
+  }
+};
+export const deleteCouncilMember = async (req, res) => {
+  try {
+    const { memberId } = req.body;
+
+    const member = req.club.clubCouncil.id(memberId);
+    if (!member) return res.status(404).json({ message: 'Council member not found' });
+
+    if (member.profilepic) await deleteImage(member.profilepic);
+
+    member.deleteOne(); // remove the subdocument
+    await req.club.save();
+
+    res.json({ message: 'Council member deleted', clubCouncil: req.club.clubCouncil });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting council member' });
+  }
+};
+export const getClubInfo = async (req, res) => {
+  try {
+    const clubId = req.club._id;
+
+    const club = await Club.findById(clubId).select('-password');
+
+    if (!club) {
+      return res.status(404).json({ message: 'Club not found' });
+    }
+
+    res.status(200).json(club);
+  } catch (error) {
+    console.error('Error fetching club info:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
