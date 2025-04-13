@@ -1,30 +1,8 @@
 import Student from '../models/student.js';
 import Blog from '../models/Blog.js';
 import cloudinary from 'cloudinary';
+import Club from '../models/Club.js'
 
-// 🟢 Update Profile
-export const updateProfile = async (req, res) => {
-  try {
-    const student = await Student.findById(req.student._id);
-
-    const { name, password } = req.body;
-
-    if (name) student.name = name;
-    if (password) student.password = password;
-
-    if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: 'studentProfiles',
-      });
-      student.profilePic = result.secure_url;
-    }
-
-    await student.save();
-    res.status(200).json({ message: 'Profile updated successfully', student });
-  } catch (err) {
-    res.status(500).json({ message: 'Error updating profile', error: err });
-  }
-};
 
 // 🟢 Logout Student
 export const logoutStudent = (req, res) => {
@@ -32,72 +10,132 @@ export const logoutStudent = (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
-// 🟢 Get Blogs by Section
-export const getBlogsBySection = async (req, res) => {
-  const { section } = req.params;
+// 1. Get all approved clubs
+export const getAllApprovedClubs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ section:section, approved: true, });
+    const clubs = await Club.find({ isApproved: true });
+    res.status(200).json(clubs);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch clubs' });
+  }
+};
+
+// 2. Get all blogs of a particular club
+export const getClubBlogs = async (req, res) => {
+  try {
+    const { clubId } = req.params;
+    const blogs = await Blog.find({ clubId, status: 'approved' });
     res.status(200).json(blogs);
-  } catch (err) {
-    res.status(500).json({ message: 'Error fetching blogs', error: err });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch club blogs' });
   }
 };
 
-// 🟢 Like a blog
-export const likeBlog = async (req, res) => {
-  const blog = await Blog.findById(req.params.id);
-  const student = await Student.findById(req.student._id);
+// 3. Get blogs based on section
+export const getBlogsBySection = async (req, res) => {
+  try {
+    const { section } = req.params;
+    const blogs = await Blog.find({ section, status: 'approved' });
+    res.status(200).json(blogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch section blogs' });
+  }
+};
 
-  if (!blog.likes.includes(req.student._id)) {
-    blog.likes.push(req.student._id);
-    student.likedBlogs.push(blog._id);
-    await blog.save();
+// 4. Update profile (name or photo)
+export const updateStudentProfile = async (req, res) => {
+  try {
+    const student = await Student.findById(req.student._id);
+
+    if (!student) return res.status(404).json({ message: 'Student not found' });
+
+    const { name } = req.body;
+
+    if (name) student.name = name;
+
+    if (req.file) {
+      // Delete old image if exists
+      if (student.profilePic) {
+        const publicId = student.profilePic.split('/').pop().split('.')[0];
+        await cloudinary.uploader.destroy(`collegeBlogs/${publicId}`);
+      }
+      student.profilePic = req.file.path;
+    }
+ 
     await student.save();
+    res.status(200).json({ message: 'Profile updated', student });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update profile' });
   }
-
-  res.status(200).json({ message: 'Blog liked' });
 };
 
-// 🟢 Unlike a blog
-export const unlikeBlog = async (req, res) => {
-  const blog = await Blog.findById(req.params.id);
-  const student = await Student.findById(req.student._id);
-
-  blog.likes = blog.likes.filter((id) => id.toString() !== req.student._id.toString());
-  student.likedBlogs = student.likedBlogs.filter((id) => id.toString() !== blog._id.toString());
-
-  await blog.save();
-  await student.save();
-
-  res.status(200).json({ message: 'Blog unliked' });
-};
-
-// 🟢 Save a blog
-export const saveBlog = async (req, res) => {
-  const student = await Student.findById(req.student._id);
-  if (!student.savedBlogs.includes(req.params.id)) {
-    student.savedBlogs.push(req.params.id);
-    await student.save();
-  }
-  res.status(200).json({ message: 'Blog saved' });
-};
-
-// 🟢 Unsave a blog
-export const unsaveBlog = async (req, res) => {
-  const student = await Student.findById(req.student._id);
-  student.savedBlogs = student.savedBlogs.filter((id) => id.toString() !== req.params.id);
-  await student.save();
-  res.status(200).json({ message: 'Blog unsaved' });
-};
-
-// 🟢 Get Liked Blogs
+// 5. Get liked blogs
 export const getLikedBlogs = async (req, res) => {
-  const student = await Student.findById(req.student._id).populate('likedBlogs');
-  res.status(200).json(student.likedBlogs);
+  try {
+    const student = await Student.findById(req.student._id).populate({
+      path: 'likedBlogs',
+      match: { status: 'approved' },
+    });
+    res.status(200).json(student.likedBlogs);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch liked blogs' });
+  }
 };
 
-// 🟢 Get Saved Blogs
-export const getSavedBlogs = async (req, res) => {
-  const student = await Student.findById(req.student._id).populate('savedBlogs');
-  res.status(200).json(student.savedBlogs);
+// 6. Get student info
+export const getStudentInfo = async (req, res) => {
+  try {
+    const student = await Student.findById(req.student._id).select('-password');
+    res.status(200).json(student);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch student info' });
+  }
+};
+// 7. Like or Unlike a blog
+export const likeOrUnlikeBlog = async (req, res) => {
+  try {
+    const { blogId } = req.params;
+    const blog = await Blog.findById(blogId);
+
+    if (!blog) return res.status(404).json({ message: 'Blog not found' });
+
+    const likedIndex = blog.likes.indexOf(req.student._id);
+
+    if (likedIndex === -1) {
+      blog.likes.push(req.student._id);  // Like
+      await blog.save();
+      res.status(200).json({ message: 'Blog liked' });
+    } else {
+      blog.likes.splice(likedIndex, 1);  // Unlike
+      await blog.save();
+      res.status(200).json({ message: 'Blog unliked' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error liking/unliking blog' });
+  }
+};
+
+// 8. Comment on a blog
+export const commentOnBlog = async (req, res) => {
+  try {
+    const { blogId } = req.params;
+    const { comment } = req.body;
+
+    if (!comment || comment.trim() === "") {
+      return res.status(400).json({ message: 'Comment cannot be empty' });
+    }
+
+    const blog = await Blog.findById(blogId);
+    if (!blog) return res.status(404).json({ message: 'Blog not found' });
+
+    blog.comments.push({
+      student: req.student._id,
+      comment
+    });
+
+    await blog.save();
+    res.status(200).json({ message: 'Comment added' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error commenting on blog' });
+  }
 };
