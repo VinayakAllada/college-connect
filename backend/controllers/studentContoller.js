@@ -9,6 +9,31 @@ export const logoutStudent = (req, res) => {
   res.cookie('token', '', { maxAge: 1 });
   res.status(200).json({ message: 'Logged out successfully' });
 };
+export const updateStudentPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const student = await Student.findById(req.student._id);
+
+    const isMatch = await bcrypt.compare(currentPassword, student.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    student.password = await bcrypt.hash(newPassword, salt);
+
+    await student.save();
+    res.status(200).json({ message: 'Password updated successfully' });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating password' });
+  }
+};
 
 // 1. Get all approved clubs
 export const getAllApprovedClubs = async (req, res) => {
