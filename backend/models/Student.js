@@ -5,7 +5,7 @@ const studentSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   profilePic: { type: String },
-  savedBlogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],
+  
   likedBlogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
 }, { timestamps: true });
 
