@@ -1,15 +1,11 @@
 import Club from "../models/Club.js";
 import Blog from "../models/Blog.js";
-import Comment from "../models/Comment.js";
+
 import bcrypt from "bcryptjs";
 import cloudinary from "../utils/cloudinary.js";
 
 import { deleteImage } from '../utils/cloudinary.js';
 
-export const logoutclub = (req, res) => {
-  res.cookie('token', '', { maxAge: 1 });
-  res.status(200).json({ message: 'Logged out successfully' });
-};
 
 
 export const createBlog = async (req, res) => {
@@ -130,7 +126,8 @@ export const addCouncilMember = async (req, res) => {
 // 4. Update Existing Council Member (based on id )
 export const updateCouncilMember = async (req, res) => {
   try {
-    const { memberId, name } = req.body;
+    const {  name } = req.body;
+    const { memberId } = req.params;
     const file = req.file;
 
     const member = req.club.clubCouncil.id(memberId);
@@ -155,25 +152,37 @@ export const updateCouncilMember = async (req, res) => {
 // 5. Change Password
 export const changeClubPassword = async (req, res) => {
   try {
+    const clubId = req.club._id;
     const { currentPassword, newPassword } = req.body;
 
-    const isMatch = await bcrypt.compare(currentPassword, req.club.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Incorrect current password' });
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const hashed = await bcrypt.hash(newPassword, 10);
-    req.club.password = hashed;
+    const club = await Club.findById(clubId);
+    if (!club) {
+      return res.status(404).json({ message: 'Club not found' });
+    }
 
-    await req.club.save();
-    res.json({ message: 'Password changed successfully' });
+    const isMatch = await bcrypt.compare(currentPassword, club.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    club.password = hashedPassword;
+
+    await club.save();
+
+    res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error changing password' });
   }
 };
 export const deleteCouncilMember = async (req, res) => {
   try {
-    const { memberId } = req.body;
+    const { memberId } = req.params;
 
     const member = req.club.clubCouncil.id(memberId);
     if (!member) return res.status(404).json({ message: 'Council member not found' });
@@ -204,3 +213,4 @@ export const getClubInfo = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+// club controller is done completely
