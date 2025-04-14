@@ -4,63 +4,62 @@ import cloudinary from 'cloudinary';
 import Club from '../models/Club.js'
 
 
-// 🟢 Logout Student
+//  Logout Student
 export const logoutStudent = (req, res) => {
   res.cookie('token', '', { maxAge: 1 });
   res.status(200).json({ message: 'Logged out successfully' });
-};
-export const updateStudentPassword = async (req, res) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    const student = await Student.findById(req.student._id);
-
-    const isMatch = await bcrypt.compare(currentPassword, student.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Current password is incorrect' });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    student.password = await bcrypt.hash(newPassword, salt);
-
-    await student.save();
-    res.status(200).json({ message: 'Password updated successfully' });
-
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating password' });
-  }
 };
 
 // 1. Get all approved clubs
 export const getAllApprovedClubs = async (req, res) => {
   try {
-    const clubs = await Club.find({ isApproved: true });
+    const clubs = await Club.find({ isApproved: true }).select('-password');
     res.status(200).json(clubs);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch clubs' });
   }
 };
-
+// populate them according to new date 
 // 2. Get all blogs of a particular club
 export const getClubBlogs = async (req, res) => {
   try {
     const { clubId } = req.params;
-    const blogs = await Blog.find({ clubId, status: 'approved' });
+    const blogs = await Blog.find({ clubId }).sort({ createdAt: -1 });
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch club blogs' });
   }
 };
+export const getclubprofile=async(req,res)=>{
+  try{
+    const { clubId } = req.params; 
+    const club = await Club.findById(clubId).select('-password');
+
+    if (!club) {
+      return res.status(404).json({ message: 'Club not found' });
+    }
+
+    res.status(200).json(club);
+  }catch(err)
+  {
+    res.status(500).json({ message: 'Failed to fetch club info ' });
+  }
+}
 
 // 3. Get blogs based on section
 export const getBlogsBySection = async (req, res) => {
   try {
     const { section } = req.params;
-    const blogs = await Blog.find({ section, status: 'approved' });
+
+    const validSections = ["Intern", "Academic Resources", "Tech Stacks", "Experience", "Club"];
+    if (!validSections.includes(section)) {
+      return res.status(400).json({ message: "Invalid blog section" });
+    }
+
+    const blogs = await Blog.find({ section, status: "approved" })
+      .sort({ createdAt: -1 })
+     
+
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch section blogs' });
@@ -86,7 +85,7 @@ export const updateStudentProfile = async (req, res) => {
       }
       student.profilePic = req.file.path;
     }
- 
+    
     await student.save();
     res.status(200).json({ message: 'Profile updated', student });
   } catch (error) {
@@ -123,17 +122,21 @@ export const likeOrUnlikeBlog = async (req, res) => {
     const blog = await Blog.findById(blogId);
 
     if (!blog) return res.status(404).json({ message: 'Blog not found' });
+    const student = await Student.findById(req.student._id);
+    const hasLiked = blog.likes.includes(student._id);
 
-    const likedIndex = blog.likes.indexOf(req.student._id);
-
-    if (likedIndex === -1) {
-      blog.likes.push(req.student._id);  // Like
+    if (!hasLiked) {
+      blog.likes.push(student._id);
+      student.likedBlogs.push(blog._id);
       await blog.save();
-      res.status(200).json({ message: 'Blog liked' });
+      await student.save();
+      return res.status(200).json({ message: 'Blog liked' });
     } else {
-      blog.likes.splice(likedIndex, 1);  // Unlike
+      blog.likes = blog.likes.filter(id => id.toString() !== student._id.toString());
+      student.likedBlogs = student.likedBlogs.filter(id => id.toString() !== blog._id.toString());
       await blog.save();
-      res.status(200).json({ message: 'Blog unliked' });
+      await student.save();
+      return res.status(200).json({ message: 'Blog unliked' });
     }
   } catch (error) {
     res.status(500).json({ message: 'Error liking/unliking blog' });
@@ -143,9 +146,11 @@ export const likeOrUnlikeBlog = async (req, res) => {
 // 8. Comment on a blog
 export const commentOnBlog = async (req, res) => {
   try {
-    const { blogId } = req.params;
-    const { comment } = req.body;
 
+    const { blogId } = req.params;
+    
+    const  {comment}  = req.body;
+     
     if (!comment || comment.trim() === "") {
       return res.status(400).json({ message: 'Comment cannot be empty' });
     }
@@ -161,6 +166,50 @@ export const commentOnBlog = async (req, res) => {
     await blog.save();
     res.status(200).json({ message: 'Comment added' });
   } catch (error) {
-    res.status(500).json({ message: 'Error commenting on blog' });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createBlog = async (req, res) => {
+  try {
+    const { title, description,section } = req.body;
+    if(!title|| !description||!section)
+      {
+        return res.status(400).json({ message: ' Complete details are  missing ' });
+      }
+
+    const coverimg = req.files['coverimg']?.[0]?.path || null;
+    const photos = req.files['photos']?.map((file) => file.path) || [];
+    const pdfs = req.files['pdfs']?.map((file) => file.path) || [];
+    if (!coverimg) {
+      return res.status(400).json({ message: 'Cover image is required' });
+    }
+   
+
+    const newBlog = await Blog.create({
+      title,
+      description,
+      coverimg,
+      photos,
+      pdfs,
+      section: section,
+      authorType: 'Student',
+      studentId:req.student._id,
+      
+      status: 'pending', 
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Blog created successfully',
+      blog: newBlog,
+    });
+  } catch (error) {
+    console.error('Error creating blog:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create blog',
+      error: error.message,
+    });
   }
 };
