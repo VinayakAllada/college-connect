@@ -40,9 +40,9 @@ function Profile() {
                     </button>
                     <button
                         className="w-full bg-purple-500 hover:scale-105 bg-purple-600 transition duration-300 text-white py-3 rounded-xl text-lg font-medium shadow"
-                        onClick={() => navigate("/SavedBlogs")}
+                        onClick={() => navigate("/Posted")}
                     >
-                        Saved Blogs
+                        Posted  Blogs
                     </button>
                     <button
                         className="w-full bg-pink-500 hover:scale-105 bg-pink-600 transition duration-300 text-white py-3 rounded-xl text-lg font-medium shadow"
