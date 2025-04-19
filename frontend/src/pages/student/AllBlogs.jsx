@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BlogCard from "./Blogcard";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 // need to update
 const AllBlogs = ({blogs}) => {
 

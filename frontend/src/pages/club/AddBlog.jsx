@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 import { toast } from "react-toastify";
 const AddBlog = () => {
@@ -25,7 +26,7 @@ const AddBlog = () => {
   images.forEach((img) => formData.append("photos", img)); 
 
   try {
-    const res = await axios.post("http://localhost:5000/api/club/create-blog", formData, {
+    const res = await axios.post(`${apiBaseUrl}/api/club/create-blog`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

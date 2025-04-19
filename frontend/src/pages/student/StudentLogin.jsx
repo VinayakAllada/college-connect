@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function StudentLogin() {
   const [email, setEmail] = useState("");
@@ -11,7 +12,7 @@ export default function StudentLogin() {
   const loginHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/student/login", { email, password }, { withCredentials: true });
+      const res = await axios.post(`${apiBaseUrl}/api/auth/student/login`, { email, password }, { withCredentials: true });
 
       if (res.data.isAdmin) {
         navigate("/admin");

@@ -109,6 +109,7 @@ const FullBlogView = ({ blog, student }) => {
   const [likes, setLikes] = useState(blog?.likes || []);
   const [comments, setComments] = useState(blog?.comments || []);
   const [newComment, setNewComment] = useState("");
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const isLiked = student && likes.includes(student._id);
 
@@ -126,7 +127,7 @@ const FullBlogView = ({ blog, student }) => {
   const handleLike = async () => {
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/students/like/${blog._id}`,
+        `${apiBaseUrl}/api/students/like/${blog._id}`,
         {},
         { withCredentials: true }
       );
@@ -144,7 +145,7 @@ const FullBlogView = ({ blog, student }) => {
     if (!newComment.trim()) return;
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/students/comment/${blog._id}`,
+        `${apiBaseUrl}/api/students/comment/${blog._id}`,
         { comment: newComment },
         { withCredentials: true }
       );

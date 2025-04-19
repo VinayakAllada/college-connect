@@ -9,10 +9,11 @@ import Clubinfo from "./Clubinfo";
 import Postblog from "./postblog";
 import FullBlogView from "./FullBlogcard";
 import AllBlogs from "./AllBlogs";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const fetchAllClubs = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:5000/api/students/clubs",
+      `${apiBaseUrl}/api/students/clubs`,
       {
         withCredentials: true, // in case you're using cookies for auth
       }
@@ -27,7 +28,7 @@ export const fetchstudentinfo = async () => {
   try {
     const name = "abx";
 
-    const response = await axios.get("http://localhost:5000/api/students/me", {
+    const response = await axios.get(`${apiBaseUrl}/api/students/me`, {
       withCredentials: true, // in case you're using cookies for auth
     });
     return response.data; // this should be the list of clubs
@@ -40,7 +41,7 @@ export const fetchallblogs = async () => {
   try {
     const name = "abx";
 
-    const response = await axios.get("http://localhost:5000/api/students/blogs", {
+    const response = await axios.get(`${apiBaseUrl}/api/students/blogs`, {
       withCredentials: true, // in case you're using cookies for auth
     });
     return response.data; // this should be the list of clubs

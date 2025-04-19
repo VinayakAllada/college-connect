@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 import { toast } from "react-toastify";
 
@@ -31,7 +31,7 @@ const AddBlog = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/students/create-blog",
+        `${apiBaseUrl}/api/students/create-blog`,
         formData,
         {
           headers: {

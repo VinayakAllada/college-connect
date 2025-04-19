@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const AdminStats = () => {
   const [stats, setStats] = useState({
@@ -16,7 +17,7 @@ const AdminStats = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/admin/analytics', {
+        const res = await axios.get(`${apiBaseUrl}/api/admin/analytics`, {
           withCredentials: true, // if using cookies for auth
         });
         setStats(res.data);

@@ -11,9 +11,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import FullClubcard from "./FullClubcard";
 import Analytics from "./Analytics";
+
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const fetchclubs = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/api/admin/pending-clubs", {
+    const res = await axios.get(`${apiBaseUrl}/api/admin/pending-clubs`, {
       withCredentials: true,
     });
     return res.data.clubs;
@@ -24,7 +27,7 @@ export const fetchclubs = async () => {
 };
 export const fetchblogs = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/api/admin/pending-blogs", {
+    const res = await axios.get(`${apiBaseUrl}/api/admin/pending-blogs`, {
       withCredentials: true,
     });
       return res.data.blogs;
@@ -68,7 +71,7 @@ const AdminHome = () => {
   const handlelogout = async () => {
   
     try {
-      const res = await axios.get("http://localhost:5000/api/auth/logout", {
+      const res = await axios.get(`${apiBaseUrl}/api/auth/logout`, {
         withCredentials: true,
       });
 

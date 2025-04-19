@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const FullBlogView = ({blog}) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const FullBlogView = ({blog}) => {
   const handleApprove=async (blogId)=>{
 	try {
 		const res = await axios.put(
-		  `http://localhost:5000/api/admin/approve-blog/${blogId}`,
+		  `${apiBaseUrl}/api/admin/approve-blog/${blogId}`,
 		  {}, // since it's a PUT without body
 		  { withCredentials: true } // for cookies/JWT session
 		);
@@ -36,7 +37,7 @@ const FullBlogView = ({blog}) => {
   const handlereject=async (blogId)=>{
 	try {
 		const res = await axios.put(
-		  `http://localhost:5000/api/admin/reject-blog/${blogId}`,
+		  `${apiBaseUrl}/api/admin/reject-blog/${blogId}`,
 		  {}, // since it's a PUT without body
 		  { withCredentials: true } // for cookies/JWT session
 		);

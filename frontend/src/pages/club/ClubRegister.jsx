@@ -42,7 +42,7 @@
 //      }
 
 //      const response = await axios.post(
-//        "http://localhost:5000/api/auth/club/register",
+//        "${apiBaseUrl}/api/auth/club/register",
 //        {
 //          ...formData,
 //          photo: imageUrl,
@@ -137,6 +137,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const ClubRegister = () => {
   const navigate = useNavigate();
@@ -171,7 +172,7 @@ const ClubRegister = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/api/auth/club/register", // Backend API for registering clubs
+        `${apiBaseUrl}/api/auth/club/register`, // Backend API for registering clubs
         data,
         { withCredentials: true } // Send cookies for session
       );

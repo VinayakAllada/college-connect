@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const ClubCouncil = ({ club }) => {
   const [editingId, setEditingId] = useState(null);
   const [newName, setNewName] = useState("");
@@ -23,7 +23,7 @@ const ClubCouncil = ({ club }) => {
     
     try {
       await axios.post(
-        `http://localhost:5000/api/club/add-council-member`,
+        `${apiBaseUrl}/api/club/add-council-member`,
         formData,
         { withCredentials: true }
       );
@@ -55,7 +55,7 @@ const ClubCouncil = ({ club }) => {
     
     try {
       await axios.delete(
-        `http://localhost:5000/api/club/delete-council-member/${memberId}`,
+        `${apiBaseUrl}/api/club/delete-council-member/${memberId}`,
         { withCredentials: true }
       );
       toast.success("Council member deleted successfully!");
@@ -77,7 +77,7 @@ const ClubCouncil = ({ club }) => {
 
     try {
       await axios.put(
-        `http://localhost:5000/api/club/update-council-member/${memberId}`,
+        `${apiBaseUrl}/api/club/update-council-member/${memberId}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

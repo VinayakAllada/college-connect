@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const ClubLogin = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +12,7 @@ const ClubLogin = () => {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/club/login",
+        `${apiBaseUrl}/api/auth/club/login`,
         { name, password },
         { withCredentials: true }
       );

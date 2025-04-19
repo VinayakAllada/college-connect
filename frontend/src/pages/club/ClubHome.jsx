@@ -10,9 +10,10 @@ import ClubCouncil from "./ClubCouncil";
 import FullBlogcard from "./FullBlogcard";
 import axios from "axios";
 import { toast } from "react-toastify";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const fetchclubinfo = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/api/club/info", {
+    const res = await axios.get(`${apiBaseUrl}/api/club/info`, {
       withCredentials: true,
     });
     return res.data;
@@ -24,7 +25,7 @@ export const fetchclubinfo = async () => {
 };
 export const fetchclubblogs = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/api/club/blogs", {
+    const res = await axios.get(`${apiBaseUrl}/api/club/blogs`, {
       withCredentials: true,
     });
     return res.data.blogs;
@@ -73,7 +74,7 @@ const ClubHome = () => {
   const handlelogout = async () => {
 
     try {
-      const res = await axios.get("http://localhost:5000/api/auth/logout", {
+      const res = await axios.get(`${apiBaseUrl}/api/auth/logout`, {
         withCredentials: true,
 
       })
