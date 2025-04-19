@@ -84,16 +84,7 @@ export const getClubBlogs = async (req, res) => {
     });
   }
 };
-export const updateClubDescription = async (req, res) => {
-  try {
-    const { description } = req.body;
-    req.club.description = description || req.club.description;
-    await req.club.save();
-    res.json({ message: 'Description updated successfully', club: req.club });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating description' });
-  }
-};
+
 // 2. Update Profile Photo
 export const updateClubProfilePhoto = async (req, res) => {
   try {
@@ -226,3 +217,66 @@ export const getClubInfo = async (req, res) => {
   }
 };
 // club controller is done completely
+
+// controllers/clubController.js
+
+
+export const updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const clubId = req.user._id; // or wherever you get the club/user ID
+
+    // 1. Fetch club/user record
+    const club = await Club.findById(clubId);
+    if (!club) return res.status(404).json({ message: "Club not found" });
+
+    // 2. Verify current password
+    const match = await bcrypt.compare(currentPassword, club.passwordHash);
+    if (!match) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+
+    // 3. Hash & update new password
+    const salt = await bcrypt.genSalt(10);
+    club.passwordHash = await bcrypt.hash(newPassword, salt);
+    await club.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const updateClubDescription = async(req, res)=>{
+  try{
+    const clubId= req.club._id;
+    const {description}= req.body;
+
+    if(typeof description !== "string"){
+      return res.status(400).json({message: "Invalid Description"});
+
+    }
+
+    const updated= await Club.findByIdAndUpdate(
+      clubId,
+      {description},
+      { new: true, runValidators: true}
+    );
+
+    if(!updated)
+    {
+      return res.status(400).json({message: "Club not found"});
+    }
+
+    res.status(200).json({
+      message: "Description updated successfully",
+      description: updated.description,
+    });
+
+  } catch(err)
+  {
+    console.error("Error in updateDescription:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
