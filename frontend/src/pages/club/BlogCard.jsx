@@ -2,15 +2,14 @@ import React from "react";
 import { Heart, Share2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import ShareButton from "../student/ShareSocially" 
+
 
 const BlogCard = ({ blog }) => {
   const navigate = useNavigate();
 
-  const handleShare = () => {
-    const blogUrl = `${window.location.origin}/blog/${blog._id}`;
-    navigator.clipboard.writeText(blogUrl);
-    toast.success("Blog link copied to clipboard!");
-  };
+  const blogUrl = `${window.location.origin}/blog/${blog._id}`;
+
   const handleReadMore = (blogId) => {
     navigate(`/club/home?tab=fullView&id=${blogId}`);
   };
@@ -37,12 +36,10 @@ const BlogCard = ({ blog }) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleShare();
             }}
             className="flex items-center gap-1 hover:text-blue-500"
           >
-            <Share2 className="w-4 h-4" />
-            <span>Share</span>
+            <ShareButton url={blogUrl} title={blog.title} />
           </button>
         </div>
         <button
@@ -57,4 +54,3 @@ const BlogCard = ({ blog }) => {
 };
 
 export default BlogCard;
-

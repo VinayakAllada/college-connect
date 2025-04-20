@@ -1,19 +1,17 @@
 import React from "react";
-import { Heart, Share2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ShareButton from "./ShareSocially"; 
 
 const BlogCard = ({ blog }) => {
   const navigate = useNavigate();
 
-  const handleShare = () => {
-    const blogUrl = `${window.location.origin}/blog/${blog._id}`;
-    navigator.clipboard.writeText(blogUrl);
-    toast.success("Blog link copied to clipboard!");
-  };
+  const blogUrl = `${window.location.origin}/blog/${blog._id}`;
+
   const handleReadMore = (blogId) => {
     navigate(`/student/home?tab=fullcard&id=${blogId}`);
   };
+
   return (
     <div
       className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden 
@@ -29,24 +27,25 @@ const BlogCard = ({ blog }) => {
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
           {blog.title}
         </h3>
+
         <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-300 mb-4">
           <div className="flex items-center gap-1">
             <Heart className="w-4 h-4 text-red-500" />
             <span>{blog.likes.length}</span>
           </div>
-          <button
+
+          <div
             onClick={(e) => {
-              e.stopPropagation();
-              handleShare();
+              e.stopPropagation();  // Prevents triggering the blog click event
             }}
-            className="flex items-center gap-1 hover:text-blue-500"
+            className="flex items-center gap-1 hover:text-blue-500 cursor-pointer"
           >
-            <Share2 className="w-4 h-4" />
-            <span>Share</span>
-          </button>
+            <ShareButton url={blogUrl} title={blog.title} />
+          </div>
         </div>
+
         <button
-           onClick={() => handleReadMore(blog._id)}
+          onClick={() => handleReadMore(blog._id)}
           className="mt-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
         >
           Read
