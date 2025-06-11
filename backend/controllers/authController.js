@@ -81,7 +81,7 @@ export const registerClub = async (req, res) => {
       name,
       password: hashedPassword,
       description,
-      photo: clubPhoto, // assuming 'photo' is the field in your model
+      photo: clubPhoto, 
     });
    
     generateToken(res, club._id, "club");
@@ -122,7 +122,7 @@ export const logoutUser = async (req, res) => {
     res
       .clearCookie("token", {
         httpOnly: true,
-        sameSite: "Lax", // Or "None" if you're using cross-site cookies with HTTPS
+        sameSite: "Lax", // Or "None" for cross-site cookies with HTTPS
         secure: process.env.NODE_ENV === "production", // true in production
       })
       .status(200)
