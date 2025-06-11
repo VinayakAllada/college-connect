@@ -13,7 +13,7 @@ export const deleteImage = async (url) => {
     // Extract public_id from URL
     const segments = url.split('/');
     const filename = segments[segments.length - 1];
-    const publicId = `collegeBlogs/${filename.split('.')[0]}`; // since you store in 'collegeBlogs' folder
+    const publicId = `collegeBlogs/${filename.split('.')[0]}`; // since storing in 'collegeBlogs' folder
 
     await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
   } catch (err) {
