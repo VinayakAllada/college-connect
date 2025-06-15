@@ -1,10 +1,10 @@
 
-//// share and styling is pending 
+ 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BlogCard from "./Blogcard";
-// need to update
+
 const AllBlogs = ({blogs}) => {
 
 
