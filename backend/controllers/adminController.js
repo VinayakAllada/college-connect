@@ -1,6 +1,7 @@
 
 import Blog from '../models/Blog.js';
 import Club from '../models/Club.js';
+import Student from '../models/Student.js';
 
 export const allClubs = async (req, res) => {
   try {
@@ -33,6 +34,22 @@ export const rejectClub = async (req, res) => {
     res.status(200).json({ message: 'Club rejected and deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to reject club' });
+  }
+};
+
+export const pendingClubs = async (req, res) => {
+  try {
+    const clubs = await Club.find({ isApproved: false });
+    res.status(200).json({ 
+      success: true,
+      clubs: clubs 
+    });
+  } catch (error) {
+    console.error("Error fetching pending clubs:", error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch pending clubs' 
+    });
   }
 };
 
@@ -77,3 +94,35 @@ export const rejectBlog = async (req, res) => {
   }
 };
 
+export const pendingBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find({ status: 'pending' });
+    res.status(200).json({ 
+      success: true,
+      blogs: blogs 
+    });
+  } catch (error) {
+    console.error("Error fetching pending blogs:", error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch pending blogs' 
+    });
+  }
+};
+
+export const analytics= async (req, res)=> {
+  try {
+
+    const stats = {
+      totalStudents: await Student.countDocuments(),
+      approvedClubs: await Club.countDocuments({isApproved: true}),
+      disapprovedClubs: await Club.countDocuments({isApproved: false}),
+      approvedBlogs: await Blog.countDocuments({status: 'approved'}),
+      pendingBlogs: await Blog.countDocuments({status: 'pending'}),
+    }
+    res.status(200).json(stats);
+  } catch(error)
+  {
+    res.status(500).json({message: 'Failed to get analytics'});
+  }
+};

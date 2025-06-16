@@ -275,55 +275,13 @@ const StudentHome = () => {
           </div>
         </div>
 
-        {/* Page content */}
-        {/*<div className="p-6 overflow-y-auto flex-1">
-          <h2 className="text-2xl font-bold mb-4">Blogs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBlogs.length > 0 ? (
-              filteredBlogs.map((blog) => (
-                <div
-                  key={blog._id}
-                  className="bg-white dark:bg-gray-800 p-4 rounded shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <h3 className="text-lg font-semibold mb-2">{blog.title}</h3>
-                  <p className="text-sm mb-4">{blog.description}</p>
-                  <div className="flex items-center justify-between">
-                    <button
-                      onClick={() => handleLike(blog._id)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
-                    >
-                      {likedBlogs.includes(blog._id) ? "Liked" : "Like"}
-                    </button>
-                    <button
-                      onClick={() => handleSave(blog._id)}
-                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
-                    >
-                      {savedBlogs.includes(blog._id) ? "Saved" : "Save"}
-                    </button>
-                  </div>
-                  <Link
-                    to={`/blog/${blog._id}`}
-                    className="text-blue-500 hover:underline mt-3 inline-block"
-                  >
-                    Read More
-                  </Link>
-                </div>
-              ))
-            ) : (
-              <p>No blogs found.</p>
-            )}
-          </div>
-        </div>*/}
-        {/* Page content */}
+        
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className="p-6 overflow-y-auto flex-1"
         >
-          {/*<h2 className="text-2xl font-bold mb-4 capitalize">
-            {tab.replace(/([A-Z])/g, " $1")}
-          </h2>*/}
           {renderTabContent()}
         </motion.div>
       </div>
@@ -332,8 +290,4 @@ const StudentHome = () => {
 };
 
 export default StudentHome;
-// show search item only in blogs page also search functionality  , shrae functionality , comment 
-// implement share functionality 
-//continue with google and forgot password 
-// logout  // profile update,show liked blogs,his blogs 
 
