@@ -43,14 +43,14 @@ const FullBlogView = ({blog}) => {
 		);
 	
 		if (res.data.success) {
-		  toast.success("Blog approved successfully!");
+		  toast.success("Blog rejected successfully!");
 		  // Optionally update the UI here (e.g., refetch blog list or mark as approved)
 		} else {
-		  toast.error(res.data.message || "Failed to approve blog");
+		  toast.error(res.data.message || "Failed to reject blog");
 		}
 	  } catch (err) {
-		console.error("Approve blog error:", err);
-		toast.error("Something went wrong while approving the blog");
+		console.error("Reject blog error:", err);
+		toast.error("Something went wrong while rejecting the blog");
 	  }
 	  navigate('/admin?tab=home');
   };
