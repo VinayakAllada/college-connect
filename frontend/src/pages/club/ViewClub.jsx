@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const ViewClub = ({ club }) => {
   const [logo, setLogo] = useState("/images/acm-logo.png");
   const [newName, setNewName] = useState("");
@@ -19,7 +19,7 @@ const ViewClub = ({ club }) => {
       formData.append('photo', file);
 
       const response = await axios.put(
-        'http://localhost:5000/api/club/update-profile-photo',
+        `${apiBaseUrl}/api/club/update-profile-photo`,
         formData,
         {
           withCredentials: true,
@@ -38,7 +38,7 @@ const ViewClub = ({ club }) => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        'http://localhost:5000/api/club/update-description',
+        `${apiBaseUrl}/api/club/update-description`,
         { description: newName },
         {
           withCredentials: true,
@@ -66,7 +66,7 @@ const ViewClub = ({ club }) => {
       }
 
       await axios.put(
-        'http://localhost:5000/api/club/change-password',
+        `${apiBaseUrl}/api/club/change-password`,
         {
           currentPassword,
           newPassword

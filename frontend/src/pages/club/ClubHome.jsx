@@ -19,7 +19,7 @@ export const fetchclubinfo = async () => {
     return res.data;
 
   } catch (err) {
-    console.error("Error fetching blogs:", err);
+    console.error("Error fetching club info:", err);
     //toast.error("Failed to load blogs");
   }
 };
@@ -116,7 +116,7 @@ const ClubHome = () => {
   ];
 
   const renderTabContent = () => {
-    // Add this filter logic for blogs
+    //filter logic for blogs
     const filteredBlogs = blogs.filter(blog => 
       blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (blog.content && blog.content.toLowerCase().includes(searchQuery.toLowerCase()))

@@ -43,14 +43,14 @@ const FullBlogView = ({club}) => {
 		);
 	
 		if (res.data.success) {
-		  toast.success("club  approved successfully!");
+		  toast.success("club  rejected successfully!");
 		  // Optionally update the UI here (e.g., refetch blog list or mark as approved)
 		} else {
-		  toast.error(res.data.message || "Failed to approve blog");
+		  toast.error(res.data.message || "Failed to reject club");
 		}
 	  } catch (err) {
-		console.error("Approve blog error:", err);
-		toast.error("Something went wrong while approving the blog");
+		console.error("reject club error:", err);
+		toast.error("Something went wrong while rejecting the club");
 	  }
   };
 

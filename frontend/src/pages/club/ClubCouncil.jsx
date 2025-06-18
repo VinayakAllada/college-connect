@@ -9,7 +9,7 @@ const ClubCouncil = ({ club }) => {
   const [activeImageId, setActiveImageId] = useState(null);
   const [newRole, setNewRole] = useState("");
   const [isAddingMember, setIsAddingMember] = useState(false);
-
+  
   const handleAddMember = async () => {
     if (!newName || !newRole || !newImage) {
       toast.warning("Please fill all fields and select an image");
