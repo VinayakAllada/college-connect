@@ -37,7 +37,7 @@ export default function Home() {
           className="text-center mb-12"
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-black font-serif">
-            Welcome to College Blog
+            Welcome to College Connect
           </h1>
           <p className="text-lg text-blue-600 max-w-xl mx-auto animate-fade-in">
             Share your ideas, club initiatives, internships and academic resources. Choose how you'd like to get started.
