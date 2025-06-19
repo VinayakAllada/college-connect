@@ -3,8 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from "framer-motion";
 import axios from "axios";
 import AllBlogs from "./AllBlogs";
+import StudentProfileEditSection from "./StudentProfileEditSection";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 export const fetchstudentinfo = async () => {
   try {
@@ -83,6 +85,10 @@ const Profile = () => {
       return <AllBlogs blogs={postedBlogs} />;
     }
 
+    if(tab==="StudentProfileEditSection"){
+      return <StudentProfileEditSection student={student} />;
+    }
+
     return (
       <div className="text-gray-500 text-lg">
         Select a blog tab from the profile panel to view your blogs.
@@ -110,7 +116,7 @@ const Profile = () => {
         <div className="w-full flex flex-col gap-4">
           <button
             className="cursor-pointer w-full bg-blue-800 hover:scale-105 transition duration-300 text-white py-2 rounded-lg text-base font-medium shadow"
-            onClick={() => navigate("/StudentProfileEditSection")}
+            onClick={() => navigate("?tab=StudentProfileEditSection")}
           >
             Edit Profile
           </button>

@@ -10,7 +10,8 @@ import {
   getStudentInfo,
   likeOrUnlikeBlog,
   commentOnBlog,
-  getclubprofile,createBlog
+  getclubprofile,createBlog,
+  changeStudentPassword
   
 } from '../controllers/studentContoller.js';
 
@@ -23,6 +24,7 @@ router.get('/blogs', protectStudent, getallblogs);
 router.get('/clubs/:clubId/profile', protectStudent, getclubprofile);
 router.get('/blogs/section/:section', protectStudent, getBlogsBySection);
 router.put('/update-profile', protectStudent, upload.single('profilePic'), updateStudentProfile);
+router.put('/change-password', protectStudent, changeStudentPassword);
 router.get('/liked-blogs', protectStudent, getLikedBlogs);
 router.get('/me', protectStudent, getStudentInfo);
 router.post('/like/:blogId', protectStudent, likeOrUnlikeBlog);

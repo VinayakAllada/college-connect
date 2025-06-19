@@ -2,7 +2,7 @@ import Student from '../models/student.js';
 import Blog from '../models/Blog.js';
 import cloudinary from 'cloudinary';
 import Club from '../models/Club.js'
-
+import bcrypt from "bcryptjs";
 
 //  Logout Student
 export const logoutStudent = (req, res) => {
@@ -92,6 +92,40 @@ export const updateStudentProfile = async (req, res) => {
     res.status(500).json({ message: 'Failed to update profile' });
   }
 };
+
+export const changeStudentPassword = async (req, res) => {
+  try {
+    const studentId = req.student._id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    console.log("Current:", currentPassword);
+    console.log("Student Hashed Password:", student.password);
+
+    const isMatch = await bcrypt.compare(currentPassword, student.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    student.password = hashedPassword;
+    await student.save();
+
+    return res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error("Error in changeStudentPassword:", error);
+    return res.status(500).json({ message: 'Error changing password' });
+  }
+};
+
 
 // 5. Get liked blogs
 export const getLikedBlogs = async (req, res) => {
