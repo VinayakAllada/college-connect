@@ -91,7 +91,7 @@ const AddBlog = () => {
           >
             //"Intern", "Academic Resources", "Tech Stacks", "Experience",
             <option value="">-- Choose Category --</option>
-            <option value="Intern">Internship / placement</option>
+            <option value="Intern">Internship / Placement</option>
             <option value="Academic Resources">Academic Resources</option>
             <option value="Tech Stacks">Tech Stack</option>
             <option value="Experience">Experience</option>

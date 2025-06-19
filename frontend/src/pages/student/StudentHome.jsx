@@ -29,9 +29,9 @@ export const fetchstudentinfo = async () => {
     const name = "abx";
 
     const response = await axios.get(`${apiBaseUrl}/api/students/me`, {
-      withCredentials: true, // in case you're using cookies for auth
+      withCredentials: true,
     });
-    return response.data; // this should be the list of clubs
+    return response.data;
   } catch (error) {
     console.error("Error fetching clubs:", error);
     throw error;
@@ -44,7 +44,7 @@ export const fetchallblogs = async () => {
     const response = await axios.get(`${apiBaseUrl}/api/students/blogs`, {
       withCredentials: true, // in case you're using cookies for auth
     });
-    return response.data; // this should be the list of clubs
+    return response.data;
   } catch (error) {
     console.error("Error fetching clubs:", error);
     throw error;
