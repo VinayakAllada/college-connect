@@ -9,6 +9,7 @@ import Clubinfo from "./Clubinfo";
 import Postblog from "./postblog";
 import FullBlogView from "./FullBlogcard";
 import AllBlogs from "./AllBlogs";
+
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 export const fetchAllClubs = async () => {
   try {
@@ -62,6 +63,8 @@ const StudentHome = () => {
   const [clubs, setClubs] = useState([]);
   const [student, setstudent] = useState([]);
   const [blogs,setblogs]=useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const getClubById = (clubsArray, clubId) => {
     return clubsArray.find((club) => club._id === clubId);
@@ -107,6 +110,11 @@ const StudentHome = () => {
    
   const renderTabContent = () => {
 
+    const filteredBlogs = blogs.filter(blog => 
+      blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (blog.content && blog.content.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
     if(tab==="clubinfo")
     {
       const foundClub = getClubById(clubs, id);
@@ -135,13 +143,13 @@ const StudentHome = () => {
 
     }
     else{
-      return <AllBlogs blogs={blogs}/>
+      return <AllBlogs blogs={filteredBlogs} />;
       
     }
    
   };
 
-  if (loading) return <p>Loading clubs...</p>;
+  if (loading) return <p>Loading...</p>;
   return (
     <div
       className={`flex h-screen ${
@@ -244,16 +252,39 @@ const StudentHome = () => {
           </h2>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center bg-gray-200 dark:bg-gray-700 rounded-lg px-4 py-2">
-              <Search className="text-gray-500 dark:text-gray-400" />
-              <input
-                type="text"
-                className="bg-transparent text-sm ml-2 outline-none w-48"
-                placeholder="Search blogs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+                      {isSearchOpen ? (
+                        <motion.div
+                          initial={{ opacity: 0, width: 0 }}
+                          animate={{ opacity: 1, width: 'auto' }}
+                          exit={{ opacity: 0, width: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <input
+                            type="text"
+                            placeholder="Search blogs..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="px-2 py-1 rounded border dark:bg-gray-700 dark:text-white w-full"
+                            autoFocus
+                            onBlur={() => {
+                              if (!searchQuery) setIsSearchOpen(false);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Escape') {
+                                setIsSearchOpen(false);
+                                setSearchQuery("");
+                              }
+                            }}
+                          />
+                        </motion.div>
+                      ) : (
+                        <button
+                          className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                          onClick={() => setIsSearchOpen(true)}
+                        >
+                          <Search className="w-5 h-5" />
+                        </button>
+                      )}
             <button onClick={() => navigate("/StudentProfileSection")}>
               <img
                 src={student.profilePic}
