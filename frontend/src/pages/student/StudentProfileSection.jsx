@@ -7,7 +7,6 @@ import StudentProfileEditSection from "./StudentProfileEditSection";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-
 export const fetchstudentinfo = async () => {
   try {
     const response = await axios.get(`${apiBaseUrl}/api/students/me`, {
@@ -85,7 +84,7 @@ const Profile = () => {
       return <AllBlogs blogs={postedBlogs} />;
     }
 
-    if(tab==="StudentProfileEditSection"){
+    if (tab === "StudentProfileEditSection") {
       return <StudentProfileEditSection student={student} />;
     }
 
@@ -96,53 +95,59 @@ const Profile = () => {
     );
   };
 
-  if (loading) return <p className="text-center text-xl font-semibold">Loading profile...</p>;
+  if (loading) {
+    return <p className="text-center text-xl font-semibold py-10">Loading profile...</p>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-100">
-      {/* Profile Sidebar */}
-      <div className="md:w-1/3 lg:w-1/4 bg-white border-r border-gray-200 shadow-md p-6 flex flex-col items-center">
-        {/* Profile Picture and Name */}
+      {/* Sidebar */}
+      <div className="w-full md:w-1/3 lg:w-1/4 bg-white border-b md:border-b-0 md:border-r border-gray-200 shadow-md p-6 flex flex-col items-center">
+        {/* Profile Info */}
         <div className="flex flex-col items-center gap-4 mb-6">
           <img
             src={student.profilePic || photo}
             alt="Profile"
-            className="w-32 h-32 rounded-full object-cover border-4 border-blue-400 shadow"
+            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-blue-400 shadow"
           />
-          <h1 className="text-2xl font-bold text-gray-800 text-center">{student.name}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">{student.name}</h1>
         </div>
 
         {/* Navigation Buttons */}
         <div className="w-full flex flex-col gap-4">
           <button
-            className="cursor-pointer w-full bg-blue-800 hover:scale-105 transition duration-300 text-white py-2 rounded-lg text-base font-medium shadow"
             onClick={() => navigate("?tab=StudentProfileEditSection")}
+            className="cursor-pointer w-full bg-blue-800 hover:scale-105 transition-transform duration-300 text-white py-2 rounded-lg text-sm sm:text-base font-medium shadow"
           >
             Edit Profile
           </button>
           <button
-            className="cursor-pointer w-full bg-purple-600 hover:scale-105 transition duration-300 text-white py-2 rounded-lg text-base font-medium shadow"
             onClick={() => navigate("?tab=postedBlogs")}
+            className="cursor-pointer w-full bg-purple-600 hover:scale-105 transition-transform duration-300 text-white py-2 rounded-lg text-sm sm:text-base font-medium shadow"
           >
             Posted Blogs
           </button>
           <button
-            className="cursor-pointer w-full bg-pink-600 hover:scale-105 transition duration-300 text-white py-2 rounded-lg text-base font-medium shadow"
             onClick={() => navigate("?tab=likedBlogs")}
+            className="cursor-pointer w-full bg-pink-600 hover:scale-105 transition-transform duration-300 text-white py-2 rounded-lg text-sm sm:text-base font-medium shadow"
           >
             Liked Blogs
           </button>
-
-          <button className="cursor-pointer underline text-blue-600 hover:text-blue-800 font-medium" onClick={()=> navigate('/student/home')}>Home</button>
+          <button
+            onClick={() => navigate("/student/home")}
+            className="cursor-pointer underline text-blue-600 hover:text-blue-800 font-medium mt-2 text-sm sm:text-base"
+          >
+            Home
+          </button>
         </div>
       </div>
 
-      {/* Content Section */}
+      {/* Content Area */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex-1 p-6 overflow-y-auto"
+        className="flex-1 p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-6rem)] md:max-h-full"
       >
         {renderTabContent()}
       </motion.div>

@@ -62,9 +62,9 @@ const StudentHome = () => {
   const [loading, setLoading] = useState(true);
   const [clubs, setClubs] = useState([]);
   const [student, setstudent] = useState([]);
-  const [blogs,setblogs]=useState([]);
+  const [blogs, setblogs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const getClubById = (clubsArray, clubId) => {
     return clubsArray.find((club) => club._id === clubId);
@@ -74,12 +74,12 @@ const StudentHome = () => {
   };
   const filterBlogsByClub = (blogs, clubId) => {
     if (!Array.isArray(blogs) || !clubId) return [];
-  
+
     return blogs.filter((blog) => blog.clubId === clubId);
   };
   const getsectionblogs = (blogs, section) => {
     if (!Array.isArray(blogs) || !section) return [];
-  
+
     return blogs.filter((blog) => blog.section === section);
   };
   const toggleTheme = () => setDarkMode(!darkMode);
@@ -90,7 +90,7 @@ const StudentHome = () => {
       try {
         const clubData = await fetchAllClubs();
         const studentdata = await fetchstudentinfo();
-         const blogdata=await fetchallblogs();
+        const blogdata = await fetchallblogs();
         setstudent(studentdata);
         setClubs(clubData);
         setblogs(blogdata);
@@ -103,66 +103,58 @@ const StudentHome = () => {
 
     getClubs();
   }, []);
-  
+
   const tab = new URLSearchParams(location.search).get("tab") || "allBlogs";
   const id = new URLSearchParams(location.search).get("id") || 12;
 
-   
+
   const renderTabContent = () => {
 
-    const filteredBlogs = blogs.filter(blog => 
+    const filteredBlogs = blogs.filter(blog =>
       blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (blog.content && blog.content.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
-    if(tab==="clubinfo")
-    {
+    if (tab === "clubinfo") {
       const foundClub = getClubById(clubs, id);
-      return <Clubinfo club={foundClub}/>
+      return <Clubinfo club={foundClub} />
     }
-    else if(tab==="postblog")
-    {
-       return <Postblog/>
+    else if (tab === "postblog") {
+      return <Postblog />
     }
-    else if(tab==="clubblogs")
-    {
-      const clubblogs=filterBlogsByClub(blogs,id);
-      return <AllBlogs blogs={clubblogs}/>
+    else if (tab === "clubblogs") {
+      const clubblogs = filterBlogsByClub(blogs, id);
+      return <AllBlogs blogs={clubblogs} />
     }
-    else if(tab==="fullcard")
-    {
-        const blog=getblogbyid(blogs,id);
-        return <FullBlogView blog={blog} student={student}/>
-        
-    }
-    else if(tab==="Experience"||tab==="Academic Resources"||tab==="Intern"||tab==="Tech Stacks" )
-    {
-      // section wise blogs 
-      const sectionblogs=getsectionblogs(blogs,tab);
-      return <AllBlogs blogs={sectionblogs}/>
+    else if (tab === "fullcard") {
+      const blog = getblogbyid(blogs, id);
+      return <FullBlogView blog={blog} student={student} />
 
     }
-    else{
-      return <AllBlogs blogs={filteredBlogs} />;
-      
+    else if (tab === "Experience" || tab === "Academic Resources" || tab === "Intern" || tab === "Tech Stacks") {
+      // section wise blogs 
+      const sectionblogs = getsectionblogs(blogs, tab);
+      return <AllBlogs blogs={sectionblogs} />
+
     }
-   
+    else {
+      return <AllBlogs blogs={filteredBlogs} />;
+
+    }
+
   };
 
   if (loading) return <p>Loading...</p>;
   return (
     <div
-      className={`flex h-screen ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
-      }`}
+      className={`flex h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+        }`}
     >
       {/* Sidebar */}
       <div
-        className={`fixed z-30 md:static top-0 left-0 h-full w-64 ${
-          darkMode ? "bg-gray-800" : "bg-blue-900"
-        } text-white transform transition-transform duration-300 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        className={`fixed z-30 md:static top-0 left-0 h-full w-64 ${darkMode ? "bg-gray-800" : "bg-blue-900"
+          } text-white transform transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
       >
         <div className="flex items-center justify-between px-4 py-4 border-b border-blue-700">
           <h1 className="text-xl font-bold">Student Panel</h1>
@@ -177,7 +169,7 @@ const StudentHome = () => {
               to="/student/home?tab=home"
               className="block px-3 py-2 rounded hover:bg-blue-700"
             >
-               Home
+              Home
             </Link>
             <Link
               to="/student/home?tab=Intern"
@@ -203,7 +195,7 @@ const StudentHome = () => {
             >
               Experience
             </Link>
-           
+
             <Link
               to="/student/home?tab=postblog"
               className="block px-3 py-2 rounded hover:bg-blue-700"
@@ -239,66 +231,65 @@ const StudentHome = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
         <div
-          className={`flex justify-between items-center shadow-md px-4 py-4 md:px-6 ${
-            darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
-          }`}
+          className={`flex justify-between items-center shadow-md px-4 py-4 md:px-6 ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"
+            }`}
         >
           <button className="md:hidden" onClick={() => setSidebarOpen(true)}>
             <Menu />
           </button>
 
           <h2 className="text-xl font-semibold text-blue-700 dark:text-white">
-             {student.name}
+            {student.name}
           </h2>
 
           <div className="flex items-center gap-4">
-                      {isSearchOpen ? (
-                        <motion.div
-                          initial={{ opacity: 0, width: 0 }}
-                          animate={{ opacity: 1, width: 'auto' }}
-                          exit={{ opacity: 0, width: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <input
-                            type="text"
-                            placeholder="Search blogs..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="px-2 py-1 rounded border dark:bg-gray-700 dark:text-white w-full"
-                            autoFocus
-                            onBlur={() => {
-                              if (!searchQuery) setIsSearchOpen(false);
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Escape') {
-                                setIsSearchOpen(false);
-                                setSearchQuery("");
-                              }
-                            }}
-                          />
-                        </motion.div>
-                      ) : (
-                        <button
-                          className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
-                          onClick={() => setIsSearchOpen(true)}
-                        >
-                          <Search className="w-5 h-5" />
-                        </button>
-                      )}
+            {isSearchOpen ? (
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                className="overflow-hidden"
+              >
+                <input
+                  type="text"
+                  placeholder="Search blogs..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="px-2 py-1 rounded border dark:bg-gray-700 dark:text-white w-full"
+                  autoFocus
+                  onBlur={() => {
+                    if (!searchQuery) setIsSearchOpen(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setIsSearchOpen(false);
+                      setSearchQuery("");
+                    }
+                  }}
+                />
+              </motion.div>
+            ) : (
+              <button
+                className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <Search className="w-5 h-5 cursor-pointer" />
+              </button>
+            )}
             <button onClick={() => navigate("/StudentProfileSection")}>
               <img
                 src={student.profilePic}
                 alt="Profile"
-                className="w-10 h-10 rounded-full object-cover border-2 border-gray-300"
+                className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 cursor-pointer"
               />
             </button>
 
-            <button onClick={toggleTheme}>
+            <button onClick={toggleTheme} className="cursor-pointer">
               {darkMode ? <Sun /> : <Moon />}
             </button>
 
             <button
-              onClick={() => navigate("/student/login")}
+              onClick={() => navigate("/")}
               className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
             >
               Logout
@@ -306,7 +297,7 @@ const StudentHome = () => {
           </div>
         </div>
 
-        
+
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}

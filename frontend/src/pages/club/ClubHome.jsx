@@ -79,7 +79,7 @@ const ClubHome = () => {
 
       })
 
-      toast.success("Logout succesful");
+      toast.success("Logout successful");
       navigate("/");
 
     } catch (err) {
