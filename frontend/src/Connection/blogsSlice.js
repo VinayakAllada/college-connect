@@ -1,4 +1,4 @@
-
+//CONNECTIONS FOLDER NOT USED IN THE PROGRAM
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../api/axios';
