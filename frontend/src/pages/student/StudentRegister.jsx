@@ -78,6 +78,7 @@ const StudentRegister = () => {
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
           required
+          autoComplete="username"
         />
 
         <input
@@ -88,6 +89,7 @@ const StudentRegister = () => {
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
           required
+          autoComplete="current-password"
         />
 
         {/* Stylish Upload Button */}

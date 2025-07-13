@@ -1,7 +1,7 @@
-import bcrypt from 'bcryptjs';
 import Student from '../models/student.js';
 import Club from '../models/Club.js';
 import generateToken from '../utils/generateToken.js';
+import bcrypt from 'bcryptjs';
 
 // ------------------------ Student + Admin -----------------------
 
@@ -9,7 +9,7 @@ export const registerStudent = async (req, res) => {
   const { name,password, email } = req.body;
 
   try {
-   
+    console.log('Received registration request:', { name, email });
     const userExists = await Student.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'Student already exists' });
 
@@ -29,7 +29,8 @@ export const registerStudent = async (req, res) => {
     generateToken(res, student._id, 'student');
     res.status(201).json({ message: 'Student registered successfully', student });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error during student registration:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
@@ -55,7 +56,8 @@ export const loginStudent = async (req, res) => {
     generateToken(res, student._id, 'student');
     res.status(200).json({ message: 'Student login success', student });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error during student login:', err); // Print full error object
+    res.status(500).json({ message: 'Server error', error: err.message, stack: err.stack });
   }
 };
 
